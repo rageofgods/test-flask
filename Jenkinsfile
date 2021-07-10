@@ -36,20 +36,17 @@ spec:
             steps {
                 container('builder') {
                     sh "buildah --storage-driver vfs -t ${IMAGE_NAME}:${GIT_COMMIT_SHORT} bud ."
+                    withCredentials([usernamePassword(credentialsId: 'quay-registry',\
+                        usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                            sh '''
+                                "buildah push --creds ${USERNAME}:${PASSWORD} \
+                                --tls-verify=false ${IMAGE_NAME}:${GIT_COMMIT_SHORT} quay.io/rageofgods/${IMAGE_NAME}:${GIT_COMMIT_SHORT}"
+                                '''
+                }
                 }
             }
         }
-        stage('Push image') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'quay-registry',\
-                 usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh '''
-                        "buildah push --creds ${USERNAME}:${PASSWORD} \
-                        --tls-verify=false ${IMAGE_NAME}:${GIT_COMMIT_SHORT} quay.io/rageofgods/${IMAGE_NAME}:${GIT_COMMIT_SHORT}"
-                        '''
-                }
-            }
-        }
+        
         stage('Deploy image') {
             steps {
                 echo 'Hello World'

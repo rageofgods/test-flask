@@ -1,0 +1,14 @@
+domain:
+  name: flask.rageofgods.ddns.net
+
+replicas:
+  count: 1
+
+app:
+  name: flask-test
+  port: 5000
+
+image:
+  registry: quay.io/rageofgods/
+  name: flask-test
+  tag: 123

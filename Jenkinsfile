@@ -62,10 +62,9 @@ spec:
         container('helm') {
             withCredentials([file(credentialsId: "yc-kubeconf", variable: 'my_private_key')]) {
                     writeFile file: "${WORKSPACE}/kubeconfig", text: readFile(my_private_key)
+                    sh "export KUBECONFIG=${WORKSPACE}/kubeconfig"
+                    sh "helm upgrade --install ${IMAGE_NAME} ./helm"
                 }
-
-            sh "export KUBECONFIG=${WORKSPACE}/kubeconfig"
-            sh "helm upgrade --install ${IMAGE_NAME} ./helm"
         }
     }
 }

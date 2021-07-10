@@ -32,22 +32,15 @@ spec:
     }
 
     stages {
-        stage('Build image') {
-            steps {
-                container('builder') {
-                    sh "buildah --storage-driver vfs -t ${IMAGE_NAME}:${GIT_COMMIT_SHORT} bud ."
-                }
-            }
-        }
-        stage('Push image') {
+        stage('Build & Push image') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'quay-registry',\
                  usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh '''
-                        buildah images
-                        buildah push --creds ${USERNAME}:${PASSWORD} ${IMAGE_NAME}:${GIT_COMMIT_SHORT} quay.io/rageofgods/${IMAGE_NAME}:${GIT_COMMIT_SHORT}
-                        '''
-                }
+                    container('builder') {
+                        sh "buildah --storage-driver vfs -t ${IMAGE_NAME}:${GIT_COMMIT_SHORT} bud ."
+                        sh "buildah push --creds ${USERNAME}:${PASSWORD} ${IMAGE_NAME}:${GIT_COMMIT_SHORT} quay.io/rageofgods/${IMAGE_NAME}:${GIT_COMMIT_SHORT}"
+                    }
+                 }
             }
         }
         stage('Deploy image') {

@@ -12,12 +12,12 @@ spec:
     containers:
     - name: builder
       image: quay.io/buildah/stable
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/bin/sh"]         #To run command inside container
       args: ["-c", "sleep 3600"]   #Specified sleep command
     - name: helm
       image: docker.io/alpine/helm:3.6.2
-      imagePullPolicy: Always
+      imagePullPolicy: IfNotPresent
       command: ["/bin/sh"]         #To run command inside container
       args: ["-c", "sleep 3600"]   #Specified sleep command
 '''

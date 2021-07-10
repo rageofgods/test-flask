@@ -60,7 +60,7 @@ spec:
 ''') {
     node(POD_LABEL) {
         container('helm') {
-            withCredentials([file(credentialsId: yc-kubeconf, variable: 'my_private_key')]) {
+            withCredentials([file(credentialsId: "yc-kubeconf", variable: 'my_private_key')]) {
                     writeFile file: "${WORKSAPCE}/kubeconfig", text: readFile(my_private_key)
                 }
 

@@ -49,22 +49,23 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: buildah
-  annotations:
-    container.apparmor.security.beta.kubernetes.io/builder: unconfined
+  name: helm
 spec:
   containers:
-  - name: builder
-    image: quay.io/buildah/stable
+  - name: helm
+    image: docker.io/alpine/helm:3.6.2
     imagePullPolicy: Always
     command: ["/bin/sh"]         #To run command inside container
     args: ["-c", "sleep 3600"]   #Specified sleep command
-    privileged: true
 ''') {
     node(POD_LABEL) {
-        git 'https://github.com/nginxinc/docker-nginx.git'
-        container('builder') {
-            sh 'cd stable/alpine/ && buildah --storage-driver vfs -t image1 bud .'
+        container('helm') {
+            withCredentials([file(credentialsId: yc-kubeconf, variable: 'my_private_key')]) {
+                    writeFile file: "${WORKSAPCE}/kubeconfig", text: readFile(my_private_key)
+                }
+
+            sh "export KUBECONFIG=${WORKSPACE}/kubeconfig"
+            sh "helm upgrade --install ${IMAGE_NAME} ./helm"
         }
     }
 }

@@ -60,7 +60,9 @@ spec:
 ''') {
     node(POD_LABEL) {
         container('helm') {
-            sh "git https://github.com/rageofgods/test-flask.git"
+            sh "ls -l"
+            sh "cd ${WORKSPACE}"
+            sh "ls -l"
             withCredentials([file(credentialsId: "186561ed-39ab-406d-ac17-341e60226ece", variable: 'my_private_key')]) {
                     writeFile file: "${WORKSPACE}/kubeconfig", text: readFile(my_private_key)
                     sh "helm upgrade --kubeconfig=${WORKSPACE}/kubeconfig --install ${IMAGE_NAME} ./helm"

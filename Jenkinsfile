@@ -44,7 +44,8 @@ spec:
                 withCredentials([usernamePassword(credentialsId: 'quay-registry',\
                  usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     sh '''
-                        "buildah push --creds ${USERNAME}:${PASSWORD} ${IMAGE_NAME}:${GIT_COMMIT_SHORT} quay.io/rageofgods/${IMAGE_NAME}:${GIT_COMMIT_SHORT}"
+                        buildah images
+                        buildah push --creds ${USERNAME}:${PASSWORD} ${IMAGE_NAME}:${GIT_COMMIT_SHORT} quay.io/rageofgods/${IMAGE_NAME}:${GIT_COMMIT_SHORT}
                         '''
                 }
             }

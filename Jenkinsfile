@@ -28,13 +28,25 @@ spec:
             script: "printf \$(git rev-parse --short ${GIT_COMMIT})",
             returnStdout: true
         )
+        IMAGE_NAME = "flask-test"
     }
 
     stages {
         stage('Build image') {
             steps {
                 container('builder') {
-                    sh "buildah --storage-driver vfs -t ${GIT_COMMIT_SHORT} bud ."
+                    sh "buildah --storage-driver vfs -t ${IMAGE_NAME}:${GIT_COMMIT_SHORT} bud ."
+                }
+            }
+        }
+        stage('Push image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'quay-registry',\
+                 usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh '''
+                        "buildah push --creds ${USERNAME}:${PASSWORD} \
+                        --tls-verify=false ${IMAGE_NAME}:${GIT_COMMIT_SHORT} quay.io/rageofgods/${IMAGE_NAME}:${GIT_COMMIT_SHORT}"
+                        '''
                 }
             }
         }

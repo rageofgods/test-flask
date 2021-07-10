@@ -38,7 +38,7 @@ spec:
                  usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     container('builder') {
                         sh "buildah --storage-driver vfs -t ${IMAGE_NAME}:${GIT_COMMIT_SHORT} bud ."
-                        sh "buildah push --creds ${USERNAME}:${PASSWORD} ${IMAGE_NAME}:${GIT_COMMIT_SHORT} quay.io/rageofgods/${IMAGE_NAME}:${GIT_COMMIT_SHORT}"
+                        sh "buildah push --creds ${USERNAME}:${PASSWORD} localhost/${IMAGE_NAME}:${GIT_COMMIT_SHORT} quay.io/rageofgods/${IMAGE_NAME}:${GIT_COMMIT_SHORT}"
                     }
                  }
             }

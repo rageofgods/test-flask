@@ -45,7 +45,29 @@ spec:
         }
         stage('Deploy image') {
             steps {
-                echo 'Hello World'
+                podTemplate(yaml: '''
+apiVersion: v1
+kind: Pod
+metadata:
+  name: buildah
+  annotations:
+    container.apparmor.security.beta.kubernetes.io/builder: unconfined
+spec:
+  containers:
+  - name: builder
+    image: quay.io/buildah/stable
+    imagePullPolicy: Always
+    command: ["/bin/sh"]         #To run command inside container
+    args: ["-c", "sleep 3600"]   #Specified sleep command
+    privileged: true
+''') {
+    node(POD_LABEL) {
+        git 'https://github.com/nginxinc/docker-nginx.git'
+        container('builder') {
+            sh 'cd stable/alpine/ && buildah --storage-driver vfs -t image1 bud .'
+        }
+    }
+}
             }
         }
     }

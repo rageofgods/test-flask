@@ -18,3 +18,14 @@ spec:
         name: {{ .Values.app.name }}
         ports:
         - containerPort: {{ .Values.app.port }}
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.app.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /index.html
+            port: {{ .Values.app.port }}
+          initialDelaySeconds: 3
+          periodSeconds: 3
